@@ -1,12 +1,24 @@
 import Discord from "discord.js";
-import config from "../config.json" assert { type: "json" };
+import dotenv from "dotenv";
+dotenv.config({ path: "./src/.env" });
+const TOKEN = process.env.TOKEN;
 
 const client = new Discord.Client({
-	intents: [Discord.GatewayIntentBits.Guilds],
+	intents: [
+		Discord.GatewayIntentBits.Guilds,
+		Discord.GatewayIntentBits.GuildMessages,
+		Discord.GatewayIntentBits.MessageContent,
+	],
 });
 
 client.once(Discord.Events.ClientReady, () => {
 	console.log(`Log In Successful, Client is ${client.user.tag}`);
 });
 
-client.login(config.token);
+client.on(Discord.Events.MessageCreate, (msg) => {
+	if (msg.content === "!Ping") {
+		msg.channel.send("Pong!");
+	}
+});
+
+client.login(TOKEN);
